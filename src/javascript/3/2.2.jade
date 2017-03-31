@@ -1,0 +1,78 @@
+extends ../../shade/layout
+block content
+
+  .container#container(ref='container')
+  script.
+    // 3.2.2 函数作为返回值输出
+
+    ;(function(){
+      /*
+        我们来看看这个例子，判断一个数据是否是数组，在以往的实现中，可以基于鸭子类型的概念来判断，比如判断这个数据有没有 length 属性，有没有 sort 方法或者 slice 方法等。但更好的方式是用 Object.prototype.toString 来计算。Object.prototype.toString.call( obj ) 返回一个字 符 串 ， 比 如 Object.prototype.toString.call( [1,2,3] ) 总 是 返 回 "[object Array]" ， 而Object.prototype.toString.call( “str”) 总是返回 "[object String]" 。所以我们可以编写一系列的isType 函数。代码如下：
+      */
+
+      var isString = function(obj){
+        return Object.prototype.toString.call(obj) === '[object String]';
+      };
+      var isArray = function(obj){
+        return Object.prototype.toString.call(obj) === '[object Array]';
+      }
+      var isNumber = function(obj){
+        return Object.prototype.toString.call(obj) === '[object Number]';
+      };
+      /*
+        我们发现，这些函数的大部分实现都是相同的，不同的只是 Object.prototype.toString.call( obj ) 返回的字符串。为了避免多余的代码，我们尝试把这些字符串作为参数提前值入 isType函数。代码如下：
+      */
+      var isType = function(type){
+        return function(obj){
+          return Object.prototype.toString.call(obj) === '[object '+ type + ']';
+        }
+      };
+      var isString = isType('String');
+      var isArray = isType('Array');
+      var isNumber = isType('Number');
+      
+      console.log(isArray([1,2,3])); // 输出：true
+
+      // 我们还可以用循环语句，来批量注册这些 isType 函数
+      var Type = {};
+      for( var i = 0, type; type = ['String','Array','Number'][i++];){
+        (function(type){
+          Type['is' + type] = function(obj){
+            return Object.prototype.toString.call(obj) === '[object '+ type + ']';
+          }
+        })(type);
+      };
+
+      console.log(Type.isArray([]));
+      console.log(Type.isString("string"));
+      
+      
+    })('1. 判断数据的类型');
+
+    ;(function(){
+      /*
+        下面是一个单例模式的例子，在第三部分设计模式的学习中，我们将进行更深入的讲解，这里暂且只了解其代码实现：
+      */
+      var getSingle = function( fn ){
+        var ret; 
+        return function(){
+          return ret || (ret = fn.apply(this, arguments));
+        };
+      };
+      /*
+        这个高阶函数的例子，既把函数当作参数传递，又让函数执行后返回了另外一个函数。我们可以看看 getSingle 函数的效果：
+      */
+      var getScript = getSingle(function(){
+        return document.createElement('script');
+      });
+
+      var stcript1 = getScript();
+      var stcript2 = getScript();
+      document.body.appendChild(stcript1)
+      document.body.appendChild(stcript1)
+      document.body.appendChild(stcript1)
+      document.body.appendChild(stcript1)
+      document.body.appendChild(stcript1)
+      document.body.appendChild(stcript2)
+      console.log( stcript1 === stcript2);
+    })('2.  getSingle 单例模式');

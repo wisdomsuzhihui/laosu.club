@@ -1,0 +1,41 @@
+// 2、设置CSS样式
+// 其实只有ripple-effect里的样式是必需的，下面的.btn是为了让按钮更好看。
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+.btn {
+    width:150px;
+    height:40px;
+    border:1px solid #d9d9d9;
+    outline:none;
+    background:#008DC5;
+    color:#fff;
+}
+
+// 3、添加波纹元素
+// 接下来添加一个放置波纹动画的元素（类名为ripple）的样式：
+.ripple {
+    border-radius: 50%;
+    // background: rgba(0, 0, 0, .2);
+    background:rgba(255,255,255,.4);
+    transform: scale(0);
+    position: absolute;
+    opacity: 1;
+}
+
+// 4、添加波纹动画
+// 再添加动画效果，在后面给类名为ripple元素动态添加下面的动画：
+// 透明度在动画中变为0，而缩放比例变为2，也就是说，圆形由小变大，且透明度逐渐变为0。
+.rippleEffect {
+    -webkit-animation: rippleEffect 2s cubic-bezier(0.23, 1, 0.32, 1);
+    animation: rippleEffect 2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes rippleEffect {
+    100% {
+        -webkit-transform: scale(2);
+        transform: scale(2);
+        opacity: 0;
+    }
+}

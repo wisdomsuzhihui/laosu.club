@@ -1,0 +1,132 @@
+@font-face {
+  font-family: 'iconfont';  /* project id 190684 */
+  src: url('//at.alicdn.com/t/font_mjfbzh66dlutmx6r.eot');
+  src: url('//at.alicdn.com/t/font_mjfbzh66dlutmx6r.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_mjfbzh66dlutmx6r.woff') format('woff'),
+  url('//at.alicdn.com/t/font_mjfbzh66dlutmx6r.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_mjfbzh66dlutmx6r.svg#iconfont') format('svg');
+}
+
+.icon{
+  font-style: normal;
+  display: inline-block;
+  vertical-align: top;
+  &::before{
+    display: inline-block;
+    font-family: 'iconfont';
+    color: inherit;
+    vertical-align: top;
+  }
+  // 留言点赞
+  &-com-zan::before{
+    content: '\e69b';
+  }
+  // 支付宝
+  &-zfb::before{
+    content: '\e605';
+  }
+  // 银行卡
+  &-bank::before{
+    content: '\e640';
+  }
+  // 加
+  &-add::before{
+    content: '\e603';
+  }
+  // 减
+  &-cut::before{
+    content: '\e609';
+  }
+  // 支付 stepicon
+  &-os::before{
+    content: '\e615';
+  }
+  // 收藏
+  &-sc::before{
+    content: '\e62e';
+  }
+  // 喇叭--声明
+  &-sm::before{
+    content: '\e6df';
+  }
+  // 头部消息
+  &-msgTop::before{
+    content: '\e65c';
+  }
+  // 400电话
+  &-tel::before{
+    content: '\e60f';
+  }
+  // 微信
+  &-wx::before{
+    content: '\e602';
+  }
+  // 新浪
+  &-sina::before{
+    content: '\e61c';
+  }
+  // 豆瓣
+  &-douban::before{
+    content: '\e657';
+  }
+  // 人人
+  &-renren::before{
+    content: '\e601';
+  }
+  // QQ空间
+  &-qzone::before{
+    content: '\e7dc';
+  }
+  // 阅读
+  &-ice::before{
+    content: '\e621';
+  }
+  // 点赞
+  &-zan::before{
+    content: '\e607';
+  }
+  // 消息
+  &-msg::before{
+    content: '\e608';
+  }
+  // 关闭
+  &-close::before{
+    content: '\e613';
+  }
+  // 分类
+  &-catgray::before{
+    content: '\e612';
+  }
+   // 用户
+  &-user::before{
+    content: '\e600';
+  }
+  // 手机
+  &-phone::before{
+    content: '\e620';
+  }
+  // 刷新
+  &-refresh::before{
+    content: '\e65b';
+  }
+  // 钱
+  &-money::before{
+    content: '\e616';
+  }
+  // 搜索
+  &-search::before{
+    content: '\e611';
+  }
+  // 向上
+  &-up::before{
+    content: '\e614';
+  }
+  // 向下
+  &-down::before{
+    content: '\e971';
+  }
+  // 向左
+  &-left::before{
+    content: '\e604';
+  }
+}

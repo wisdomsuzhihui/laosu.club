@@ -1,0 +1,9 @@
+extends ../shade/layout
+block content
+  #indexModle
+    .container#container(ref='container')
+      dl.note-list(v-for="item in list")
+        dt {{title}}
+        dd(v-for="items in item.pList")
+          a(v-bind:href="[items.url+'?title='+ items.title]", v-bind:title="items.title").item {{items.title}} 
+    script(src="/skin/js/jsDome/index.js")

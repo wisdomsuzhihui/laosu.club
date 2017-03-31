@@ -1,0 +1,29 @@
+extends ../../shade/layout
+block content
+  .container#container(ref='container')
+  
+  script.
+    //- 4.5 惰性单例
+    
+    /*
+      惰性单例指的是在需要的时候才创建对象实例。惰性单例是单例模式的重点，这种技术在实
+      际开发中非常有用，有用的程度可能超出了我们的想象，实际上在本章开头就使用过这种技术，
+      instance 实例对象总是在我们调用 Singleton.getInstance 的时候才被创建，而不是在页面加载好
+      的时候就创建，代码如下：
+    */
+    ;(function(){
+      
+      Singleton.getInstance = (function(){
+        var instance = null;
+        return function(name){
+          if(instance){
+            instance = new Singleton(name);
+          }
+          return instance;
+        }
+      })();
+
+
+
+
+    })();

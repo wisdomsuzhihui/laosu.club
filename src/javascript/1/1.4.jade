@@ -1,0 +1,166 @@
+extends ../../shade/layout
+block content
+
+  .container#container(ref='container')
+
+    script.
+      ;(function(){
+        /*
+          原型模式的实现关键，是语言本身是否提供了 clone 方法。ECMAScript 5提供了 Object.create (ie8及以下不支持)
+          方法，可以用来克隆对象。代码如下：
+        */
+        var Plane = function(){
+          this.blood = 100;
+          this.attackLevel = 1;
+          this.defenseLevel = 1;
+        };
+
+        var plane = new Plane();
+        plane.blood = 500;
+        plane.attackLevel = 10;
+        plane.defenseLevel = 7;
+
+        var clonePlane = Object.create(plane);
+        console.log(clonePlane); // 输出：Object {blood: 500, attackLevel: 10, defenseLevel: 7}
+        /*
+          在不支持 Object.create 方法的浏览器中，则可以使用以下代码：
+        */
+        Object.create = Object.create || function(obj){
+          var F = function(){};
+          F.prototype = obj;
+
+          return new F();
+        }
+
+      })('1.4.1 使用克隆的原型模式');
+
+      ;(function(){
+        /*
+          1. 所有的数据都是对象
+          JavaScript在设计的时候，模仿 Java 引入了两套类型机制：基本类型和对象类型。基本类型
+          包括 undefined 、 number 、 boolean 、 string 、 function 、 object 。从现在看来，这并不是一个好的
+          想法。
+          按照 JavaScript设计者的本意，除了 undefined 之外，一切都应是对象。为了实现这一目标，
+          number 、 boolean 、 string 这几种基本类型数据也可以通过“包装类”的方式变成对象类型数据来
+          处理。
+          我们不能说在 JavaScript中所有的数据都是对象，但可以说绝大部分数据都是对象。那么相
+          信在 JavaScript中也一定会有一个根对象存在，这些对象追根溯源都来源于这个根对象。
+          事实上，JavaScript 中的根对象是 Object.prototype 对象。 Object.prototype 对象是一个空的
+          对象。我们在 JavaScript 遇到的每个对象，实际上都是从 Object.prototype 对象克隆而来的，
+          Object.prototype 对象就是它们的原型。比如下面的 obj1 对象和 obj2 对象：
+        */
+
+        var obj1 = new Object();
+        var obj2 = {};
+        /*
+          可以利用 ECMAScript 5提供的 Object.getPrototypeOf 来查看这两个对象的原型:
+        */
+        console.log( Object.getPrototypeOf( obj1 ) === Object.prototype ); // 输出：true
+        console.log( Object.getPrototypeOf( obj2 ) === Object.prototype ); // 输出：true
+      })('1.4.5 JavaScript中的原型继承');
+
+      ;(function(){
+        /*
+          但在 JavaScript语言里，我们并不需要关心克隆的细节，因为这是引擎内部负责实现的。我
+          们所需要做的只是显式地调用 var obj1 = new Object() 或者 var obj2 = {} 。此时，引擎内部会从
+          Object.prototype 上面克隆一个对象出来，我们最终得到的就是这个对象。
+          再来看看如何用 new 运算符从构造器中得到一个对象，下面的代码我们再熟悉不过了：
+        */
+        function Person(name){
+          this.name = name;
+        };
+
+        Person.prototype.getName = function(){
+          return this.name;
+        }
+
+        var a = new Person('sven');
+        console.log( a.name ); // 输出：sven
+        console.log( a.getName() ); // 输出：sven
+        console.log( Object.getPrototypeOf( a ) === Person.prototype ); // 输出：true
+
+        /*
+          在这里 Person 并不是类，而是函数构造器，JavaScript 的函数既可以作为普通函数被调用，也可以作为构造器被调用。当使用 new 运算符来调用函数时，此时的函数就是一个构造器。 用 new 运算符来创建对象的过程，实际上也只是先克隆 Object.prototype 对象，再进行一些其他额外操作的过程。①
+          在 Chrome和 Firefox等向外暴露了对象 __proto__ 属性的浏览器下，我们可以通过下面这段代码来理解 new 运算的过程：
+        */
+
+        var objectFactory = function(){
+          var obj = new Object(), // 从 Object.prototype 上克隆一个空的对象
+              Constructor = [].shift.call(arguments); // 取得外部传入的构造器，此例是 Person
+              obj.__proto__ = Constructor.prototype; // 指向正确的原型 将obj 指向 Person
+          var ret = Constructor.apply(obj,arguments); // 借用外部传入的构造器给 obj 设置属性
+          ret = typeof ret ==='object' ? ret : obj; // 确保构造器总是会返回一个对象
+          console.log(ret)
+          return ret
+        }
+        
+        var a1 = objectFactory( Person, 'laosu' );
+        console.log( a1.name ); // 输出：laosu
+        console.log( a1.getName() ); // 输出：laosu
+        console.log( Object.getPrototypeOf( a1 ) === Person.prototype ); // 输出：true
+        
+      })();
+
+      ;(function(){
+        /*
+          JavaScript 给对象提供了一个名为 __proto__ 的隐藏属性，某个对象的 __proto__ 属性默认会指
+          向它的构造器的原型对象，即 {Constructor}.prototype 。在一些浏览器中， __proto__ 被公开出来，
+          我们可以在 Chrome或者 Firefox上用这段代码来验证：
+        */
+        var a = new Object();
+        console.log ( a.__proto__=== Object.prototype ); // 输出：true
+      })('3. 对象会记住它的原型');
+
+      ;(function(){
+        /*
+          这条规则即是原型继承的精髓所在。从对 Io 语言的学习中，我们已经了解到，当一个对象
+          无法响应某个请求的时候，它会顺着原型链把请求传递下去，直到遇到一个可以处理该请求的对
+          象为止。
+
+          实际上，虽然 JavaScript 的对象最初都是由 Object.prototype 对象克隆而来的，但对象构造
+          器的原型并不仅限于 Object.prototype 上，而是可以动态指向其他对象。这样一来，当对象 a 需
+          要借用对象 b 的能力时，可以有选择性地把对象 a 的构造器的原型指向对象 b ，从而达到继承的
+          效果。下面的代码是我们最常用的原型继承方式
+        */
+        var obj = {name: 'sven'};
+
+        var A = function(){};
+        A.prototype = obj;
+
+        var a = new A();
+        console.log(a.name);
+        /*
+            首先，尝试遍历对象 a 中的所有属性，但没有找到 name 这个属性。
+            查找 name 属性的这个请求被委托给对象 a 的构造器的原型，它被 a. __proto__ 记录着并且
+          指向 A.prototype ，而 A.prototype 被设置为对象 obj 。
+            在对象 obj 中找到了 name 属性，并返回它的值。
+        */
+      })(' 4. 如果对象无法响应某个请求，它会把这个请求委托给它的构造器的原型');
+
+      ;(function(){
+        /*
+          ECMAScript 6带来了新的 Class语法。这让 JavaScript看起来像是一门基于类的语言，
+          但其背后仍是通过原型机制来创建对象。通过 Class创建对象的一段简单示例代码
+          ① 如下所示 ：
+        */
+        class Animal{
+          constructor(name){
+            this.name = name;
+          }
+          getName(){
+            return this.name;
+          }
+        }
+
+        class Dog extends Animal {
+          constructor(name){
+            super(name);
+          }
+          speak(){
+            return "woof";
+          }
+        }
+
+        var dog = new Dog("Scamp");
+        console.log(dog.getName() + 'says: ' + dog.speak());
+      })('1.4.6 原型继承的未来');
