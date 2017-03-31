@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <div id="div1">我是一个DIV</div>
+      <p>1</p>
+      <p>2</p>
+      <p>3</p>
+      <p>4</p>
+      <p>5</p>
+      <script>
+        ;(function(){
+            /*
+              除了变量的作用域之外，另外一个跟闭包有关的概念是变量的生存周期。
+              对于全局变量来说，全局变量的生存周期当然是永久的，除非我们主动销毁这个全局变量。
+              而对于在函数内用 var 关键字声明的局部变量来说，当退出函数时，这些局部变量即失去了它们的价值，它们都会随着函数调用的结束而被销毁：
+            */
+          var func = function(){
+            var a = 1; // 退出函数后局部变量 a 将被销毁
+            console.log(a + '已被销毁');
+          };
+          func();
+          func();
+          func();
+          func();
+          //- 现在来看看下面这段代码：
+        
+          var func = function(){
+            var a=1;
+            return function(){
+              a++;
+              console.log(a);
+            }
+          };
+          var f = func();
+          f(); // 输出：2
+          f(); // 输出：3
+          f(); // 输出：4
+          f(); // 输出：5
+          /*
+            跟我们之前的推论相反，当退出函数后，局部变量 a 并没有消失，而是似乎一直在某个地方存活着。这是因为当执行 var f = func(); 时， f 返回了一个匿名函数的引用，它可以访问到 func()被调用时产生的环境，而局部变量 a 一直处在这个环境里。既然局部变量所在的环境还能被外界
+            访问，这个局部变量就有了不被销毁的理由。在这里产生了一个闭包结构，局部变量的生命看起来被延续了。
+            利用闭包我们可以完成许多奇妙的工作，下面介绍一个闭包的经典应用。假设页面上有 5个div 节点，我们通过循环来给每个 div 绑定 onclick 事件，按照索引顺序，点击第 1个 div 时弹出0，点击第 2个 div 时弹出 1，以此类推。代码如下：
+          */
+          var nodes = document.getElementsByTagName('p');
+          for(var i=0,len=nodes.length;i<len;i++){
+            nodes[i].onclick = function(){
+              console.log(i);
+            }
+          };
+          /*
+            测试这段代码就会发现，无论点击哪个 div ，最后弹出的结果都是 5。这是因为 div 节点的onclick 事件是被异步触发的，当事件被触发的时候， for 循环早已结束，此时变量 i 的值已经是5，所以在 div 的 onclick 事件函数中顺着作用域链从内到外查找变量 i 时，查找到的值总是 5。
+            解决方法是在闭包的帮助下，把每次循环的 i 值都封闭起来。当在事件函数中顺着作用域链中从内到外查找变量 i 时，会先找到被封闭在闭包环境中的 i ，如果有 5个 div ，这里的 i 就分别是 0,1,2,3,4：
+          */
+          for( var i = 0, len = nodes.length; i < len; i++){
+            (function(i){
+              nodes[i].onclick = function(){
+                console.log(i);
+              }
+            })(i)
+          };
+          //- 根据同样的道理，我们还可以编写如下一段代码：
+         
+          var Type = {};
+        
+          for(var i = 0, type; type =['String', 'Array', 'Number'][i++];){
+            (function(type){
+              Type['is'+ type] = function(obj){
+                return Object.prototype.toString.call(obj) === '[object '+ type +']';
+              }
+            })(type)
+          };
+          console.log(Type.isArray([])); // true
+          console.log(Type.isString("str")); // true
+          console.log(Type.isNumber("str")); // false
+          console.log(Type.isNumber(123)); // true
+        })('3.1.2 变量的生存周期');
+      </script>
+    </div>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>

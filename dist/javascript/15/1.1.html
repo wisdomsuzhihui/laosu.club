@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container"></div>
+    <script>
+      // 15.1 模拟传统面向对象语言的装饰者模式
+      /*
+        假设我们在编写一个飞机大战的游戏，随着经验值的增加，我们操作的飞机对象可以升级成更厉害的飞机，一开始这些飞机只能发射普通的子弹，升到第二级时可以发射导弹，升到第三级时可以发射原子弹。
+        下面来看代码实现，首先是原始的飞机类
+      */
+      var Plane = function(){};
+      Plane.prototype.fire=function(){
+        console.log( '发射普通子弹' );
+      }
+      // 接下来增加两个装饰类，分别是导弹和原子弹
+      
+      var MissileDecorator = function( plane ){
+        this.plane = plane;
+      }
+      MissileDecorator.prototype.fire = function(){
+        this.plane.fire();
+        console.log('发射导弹')
+      }
+      
+      var AtomDecorator = function( plane ){
+        this.plane = plane;
+      }
+      AtomDecorator.prototype.fire = function(){
+        this.plane.fire();
+        console.log('发射原子弹')
+      }
+      
+      var plane = new Plane();
+      plane = new MissileDecorator( plane );
+      plane = new AtomDecorator( plane );
+      plane.fire();
+      
+      // 分别输出： 发射普通子弹、发射导弹、发射原子弹
+    </script>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>

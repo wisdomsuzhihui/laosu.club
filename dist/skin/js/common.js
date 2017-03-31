@@ -1,0 +1,1 @@
+window.onload=function(){var e=document.createElement("h1");e.innerHTML=dibuModel.title,e.className="title";var n=document.getElementById("container");n.children[0]?n.insertBefore(e,n.children[0]):n.appendChild(e)};

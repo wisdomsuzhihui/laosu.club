@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <button id="execute">点击我执行命令</button>
+      <button id="undo">点击我执行命令</button>
+      <script>
+        // 3.1.5 用闭包实现命令模式
+        
+        var Tv = {
+          open: function(){
+            console.log('打开电视机');
+          },
+          close: function(){
+            console.log('关上电视机');
+          }
+        };
+        
+        var OpenTvCommand = function(receiver){
+          this.receiver = receiver;
+        };
+        
+        OpenTvCommand.prototype.execute = function(){
+          this.receiver.open(); // 执行命令，打开电视机
+        };
+        
+        OpenTvCommand.prototype.undo = function(){
+          this.receiver.close(); // 撤销命令，关闭电视机
+        };
+        
+        var setCommand = function( command ){
+          document.getElementById('execute').onclick= function(){
+            command.execute(); // 输出：打开电视机
+          }
+          document.getElementById('undo').onclick=function(){
+            command.undo(); // 输出：关闭电视机
+          }
+        };
+        
+        setCommand(new OpenTvCommand(Tv));
+        
+        /*
+          命令模式的意图是把请求封装为对象，从而分离请求的发起者和请求的接收者（执行者）之间的耦合关系。在命令被执行之前，可以预先往命令对象中植入命令的接收者。
+          但在 JavaScript中，函数作为一等对象，本身就可以四处传递，用函数对象而不是普通对象来封装请求显得更加简单和自然。如果需要往函数对象中预先植入命令的接收者，那么闭包可以完成这个工作。在面向对象版本的命令模式中，预先植入的命令接收者被当成对象的属性保存起来；而在闭包版本的命令模式中，命令接收者会被封闭在闭包形成的环境中，代码如下：
+        */
+        
+        var Tv1 = {
+          open: function(){
+            console.log('打开电视机 === > 闭包');
+          },
+          close: function(){
+            console.log('关上电视机 === > 闭包');
+          }
+        };
+        
+        var createCommand1 = function( receiver ){
+          var execute = function(){
+            return receiver.open(); // 执行命令，打开电视机
+          }
+        
+          var undo = function(){
+            return receiver.close(); // 执行命令，关闭电视机
+          }
+        
+          return {
+            execute: execute,
+            undo: undo
+          }
+        };
+        
+        var setCommand1 = function ( command ){
+          document.getElementById('execute').onmouseover=function(){
+            command.execute(); // 输出：打开电视机
+          }
+          document.getElementById( 'undo' ).onmouseover = function(){
+            command.undo(); // 输出：关闭电视机
+          }
+        }
+        
+        setCommand1( createCommand1(Tv1));
+      </script>
+    </div>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>

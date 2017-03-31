@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <button id="button">button</button>
+    </div>
+    <script>
+      // 15.4 装饰函数
+      /*
+        在 JavaScript中，几乎一切都是对象，其中函数又被称为一等对象。在平时的开发工作中，也许大部分时间都在和函数打交道。在 JavaScript中可以很方便地给某个对象扩展属性和方法，但却很难在不改动某个函数源代码的情况下，给该函数添加一些额外的功能。在代码的运行期间，我们很难切入某个函数的执行环境。
+        要想为函数添加一些功能，最简单粗暴的方式就是直接改写该函数，但这是最差的办法，直接违反了开放封闭原则：
+      */
+      var a = function(){
+        console.log(1);
+      }
+      // 改成：
+      var a = function(){
+        console.log(1);
+        console.log(2);
+      }
+      
+      /*
+        很多时候我们不想去碰原函数，也许原函数是由其他同事编写的，里面的实现非常杂乱。甚至在一个古老的项目中，这个函数的源代码被隐藏在一个我们不愿碰触的阴暗角落里。现在需要一个办法，在不改变函数源代码的情况下，能给函数增加功能，这正是开放封闭原则给我们指出的光明道路。
+        其实在 15.3节的代码中，我们已经找到了一种答案，通过保存原引用的方式就可以改写某个函数：
+      */
+      var b = function(){
+        console.log('a');
+      }
+      var _b = b;
+      b = function(){
+        _b();
+        console.log('b');
+      }
+      
+      b();
+      
+      /*
+        这是实际开发中很常见的一种做法，比如我们想给 window 绑定 onload 事件，但是又不确定这个事件是不是已经被其他人绑定过，为了避免覆盖掉之前的 window.onload 函数中的行为，我们一般都会先保存好原先的 window.onload ，把它放入新的 window.onload 里执行:
+      */
+      
+      window.onload = function(){
+        console.log('aa');
+      }
+      var _onload = window.onload || function(){};
+      
+      window.onload = function(){
+        _onload();
+        console.log('bb');
+      }
+      
+      /*
+      这样的代码当然是符合开放封闭原则的，我们在增加新功能的时候，确实没有修改原来的window.onload 代码，但是这种方式存在以下两个问题。
+          必须维护 _onload 这个中间变量，虽然看起来并不起眼，但如果函数的装饰链较长，或者需要装饰的函数变多，这些中间变量的数量也会越来越多。
+          其实还遇到了 this 被劫持的问题，在 window.onload 的例子中没有这个烦恼，是因为调用普通函数 _onload 时， this 也指向 window ，跟调用 window.onload 时一样（函数作为对象的方法被调用时， this 指向该对象，所以此处 this 也只指向 window ）。现在把 window.onload换成 document.getElementById ，代码如下:
+      */
+      
+      var _getElementById = document.getElementById;
+      
+      //- document.getElementById = function(id){
+      //-   console.log(1);
+      //-   return _getElementById(id);  // (1)
+      //- }
+      
+      // var button = document.getElementById('button');
+      
+      
+      /*
+        执行这段代码，我们看到在弹出 alert(1) 之后，紧接着控制台抛出了异常：
+        // 输出： Uncaught TypeError: Illegal invocation
+      
+      
+        异常发生在(1) 处的 _getElementById( id ) 这句代码上，此时 _getElementById 是一个全局函数，当调用一个全局函数时， this 是指向 window 的，而 document.getElementById 方法的内部实现需要
+        使用 this 引用， this 在这个方法内预期是指向 document ，而不是window , 这是错误发生的原因，所以使用现在的方式给函数增加功能并不保险。
+      
+        改进后的代码可以满足需求，我们要手动把 document 当作上下文 this 传入 _getElementById 
+      */
+      document.getElementById=function(){
+        console.log(1);
+        return _getElementById.apply(document,arguments);
+      }
+      var button = document.getElementById('button');
+    </script>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <div id="div1">我是一个DIV</div>
+      <script>
+        /*
+          除去不常用的 with 和 eval 的情况，具体到实际应用中， this 的指向大致可以分为以下 4种。
+            作为对象的方法调用。
+            作为普通函数调用。
+            构造器调用。
+            Function.prototype.call 或 Function.prototype.apply 调用。
+        */
+        ;(function(){
+          var obj = {
+            a: 1,
+            getA: function(){
+              console.log(this === obj);
+              console.log(this.a);
+            }
+          };
+          obj.getA();
+        })('1. 作为对象的方法调用');
+        
+        ;(function(){
+          /*
+            当函数不作为对象的属性被调用时，也就是我们常说的普通函数方式，此时的 this 总是指
+            向全局对象。在浏览器的 JavaScript里，这个全局对象是 window 对象。
+          */
+          window.name = 'globalName';
+          var getName = function(){
+            return this.name;
+          };
+          console.log(getName()); // 输出：globalName
+          // 或者
+        
+          window.name1 = 'globalName2';
+        
+          var myObject ={
+            name: 'laosu',
+            getName: function(){
+              return this.name1;
+            }
+          };
+        
+          var getName = myObject.getName;
+          console.log(getName()); 
+        
+          /*
+            有时候我们会遇到一些困扰，比如在 div 节点的事件函数内部，有一个局部的 callback 方法，
+            callback 被作为普通函数调用时， callback 内部的 this 指向了 window ，但我们往往是想让它指向
+            该 div 节点，见如下代码：
+          */
+          
+          window.id = 'window';
+          document.getElementById('div1').onclick = function(e){
+            
+            console.log(this.id); // 'div1'
+            var callback = function(){
+              console.log(this.id); // 'window'
+            }
+            callback();
+          };
+          
+          // 保存div节点的引用 可解决这类问题
+          /*
+            在 ECMAScript 5的 strict 模式下，这种情况下的 this 已经被规定为不会指向全局对象，而是 undefined 
+          */
+          function func(){
+          "use strict"
+          console.log( this ); // 输出：undefined
+          }
+          func();
+        })('2. 作为普通函数调用'); // 输出：globalName2
+        
+        ;(function(){
+          /*
+            JavaScript 中没有类，但是可以从构造器中创建对象，同时也提供了 new 运算符，使得构造
+            器看起来更像一个类。
+            除了宿主提供的一些内置函数，大部分 JavaScript函数都可以当作构造器使用。构造器的外
+            表跟普通函数一模一样，它们的区别在于被调用的方式。当用 new 运算符调用函数时，该函数总
+            会返回一个对象，通常情况下，构造器里的 this 就指向返回的这个对象，见如下代码:
+          */
+          var MyClass = function(){
+            this.name = 'laosu';
+          };
+          var obj = new MyClass();
+          console.log(obj.name); // laosu
+        
+          /*
+            但用 new 调用构造器时，还要注意一个问题，如果构造器显式地返回了一个 object 类型的对
+            象，那么此次运算结果最终会返回这个对象，而不是我们之前期待的 this ：
+          */
+          var MyClass1 = function(){
+            this.name='laosu';
+            return { // 显示地返回一个对象
+              name: 'suzhihui'
+            }
+          };
+        
+          var obj1 = new MyClass1();
+          console.log(obj1.name); // 输出 suzhihui
+        
+          /*
+            如果构造器不显式地返回任何数据，或者是返回一个非对象类型的数据，就不会造成上述
+            问题：
+          */
+          var MyClass2 = function(){
+            this.name = 'laosu'
+            return 'anne'; // 返回string类型
+          };
+        
+          var obj2 = new MyClass();
+          console.log(obj.name); // 输出：laosu
+        
+        })('3. 构造器调用')
+        
+        ;(function(){
+          /*
+            跟普通的函数调用相比，用 Function.prototype.call 或 Function.prototype.apply 可以动态地
+            改变传入函数的 this ：
+          */
+          var obj1 = {
+            name: 'laosu',
+            getName: function(){
+              return this.name;
+            }
+          };
+        
+          var obj2 ={
+            name: 'suzhihui'
+          };
+        
+          console.log(obj1.getName()); // laosu;
+          console.log(obj1.getName.call(obj2)); // suzhihui
+          
+        })('4.  Function.prototype.call 或 Function.prototype.apply 调用');
+      </script>
+    </div>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>
