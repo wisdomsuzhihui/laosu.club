@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <div id="div1">我是一个DIV</div>
+      <p>1</p>
+      <p>2</p>
+      <p>3</p>
+      <p>4</p>
+      <p>5</p>
+      <script>
+        /*
+          对于 JavaScript 程序员来说，闭包（closure）是一个难懂又必须征服的概念。闭包的形成与变量的作用域以及变量的生存周期密切相关。下面我们先简单了解这两个知识点。
+        */
+        
+        ;(function(){
+          /*
+            变量的作用域，就是指变量的有效范围。我们最常谈到的是在函数中声明的变量作用域。
+            当在函数中声明一个变量的时候，如果该变量前面没有带上关键字 var ，这个变量就会成为全局变量，这当然是一种容易造成命名冲突的做法。
+            另外一种情况是用 var 关键字在函数中声明变量，这时候的变量即是局部变量，只有在该函数内部才能访问到这个变量，在函数外面是访问不到的。代码如下：
+          */
+          var func = function(){
+            var a=1;
+            console.log(a); //1
+          };
+          func();
+          //console.log(a); // 输出：Uncaught ReferenceError: a is not defined
+        
+          /*
+            在 JavaScript中，函数可以用来创造函数作用域。此时的函数像一层半透明的玻璃，在函数里面可以看到外面的变量，而在函数外面则无法看到函数里面的变量。这是因为当在函数中搜索一个变量的时候，如果该函数内并没有声明这个变量，那么此次搜索的过程会随着代码执行环境创建的作用域链往外层逐层搜索，一直搜索到全局对象为止。变量的搜索是从内到外而非从外到内的。
+            下面这段包含了嵌套函数的代码，也许能帮助我们加深对变量搜索过程的理解：
+          */
+          var a = 1;
+          var func1 = function(){
+            var b=2;
+            var func2 = function(){
+              var c = 3;
+              console.log(b); //2
+              console.log(a); //1
+            }
+            func2();
+            //- console.log(c); //输出：Uncaught ReferenceError: c is not defined
+          };
+          func1();
+        })('3.1.1 变量的作用域');
+      </script>
+    </div>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>

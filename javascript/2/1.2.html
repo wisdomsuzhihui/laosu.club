@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <div id="div1">我是div1</div>
+    </div>
+    <script>
+      ;(function(){
+        var obj = {
+          myName: 'laosu',
+          getName: function(){
+            //- console.log(this)
+            return this.myName;
+          }
+        };
+        console.log(obj.getName()); // laosu
+        
+        var getName2 = obj.getName;
+        console.log(getName2()); // undefined
+        /*
+          当调用 obj.getName 时， getName 方法是作为 obj 对象的属性被调用的，根据 2.1.1节提到的规
+          律，此时的 this 指向 obj 对象，所以 obj.getName() 输出 'sven' 。
+          图灵社区会员 轩辕 专享 尊重版权
+          28 第 2章  this 、 call 和 apply
+          当用另外一个变量 getName2 来引用 obj.getName ，并且调用 getName2 时，根据 2.1.2节提到的
+          规律，此时是普通函数调用方式， this 是指向全局 window 的，所以程序的执行结果是 undefined 。
+        */
+      
+        var getId = function(id){
+          return document.getElementById(id);
+        };
+        getId('div1').style.background='red';
+        /*
+          我们也许思考过为什么不能用下面这种更简单的方式：
+        */
+        //- var getId1 = document.getElementById;
+        //- getId1( 'div1' ).style.background='green';
+        /*
+          在 Chrome、Firefox、IE10 中执行过后就会发现，这段代码抛出了一个异常。这是因为许多
+          引擎的 document.getElementById 方法的内部实现中需要用到 this 。这个 this 本来被期望指向
+          document ，当 getElementById 方法作为 document 对象的属性被调用时，方法内部的 this 确实是指
+          向 document 的。
+          但当用 getId 来引用 document.getElementById 之后，再调用 getId ，此时就成了普通函数调用，
+          函数内部的 this 指向了 window ，而不是原来的 document 。
+        */
+        document.getElementById = (function(func){
+          return function(){
+            return func.apply(document,arguments);
+          }
+        })(document.getElementById);
+      
+        var getId2 = document.getElementById;
+      
+        var div = getId('div1').style.background='green';
+      
+        
+      })();
+    </script>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>

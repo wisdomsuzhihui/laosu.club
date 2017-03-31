@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimum-scale=1.0,maximum-scale=1.0,minimal-ui"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <title>Document</title>
+    <link rel="stylesheet" href="/skin/plugs/normalize-css/normalize.css"/>
+    <link rel="stylesheet" href="/skin/css/base.css"/>
+    <script src="http://www.zczj.com/skin/js/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/vue/2.0.5/vue.min.js"></script>
+    <script src="//cdn.bootcss.com/vue-resource/1.0.3/vue-resource.min.js"></script>
+    <script src="/skin/js/util.js"></script>
+  </head>
+  <body>
+    <section id="header">
+      <div class="header-top">
+        <div class="container clearfix"></div>
+      </div>
+      <header>
+        <div class="header-warp">
+          <div class="container clearfix"></div>
+        </div>
+      </header>
+    </section>
+    <!--==================================================-->
+    <div id="container" ref="container" class="container">
+      <button id="button">按钮</button>
+    </div>
+    <script>
+      // 15.4 用 AOP 装饰函数
+      //- 首先给出 Function.prototype.before 方法和 Function.prototype.after 方法：
+      Function.prototype.before = function(beforefn){
+          // 保存原函数的引用
+          var _self = this; 
+          // 返回包含了原函数和新函数的"代理"函数
+          return function(){
+              // 执行新函数，且保证 this 不被劫持，新函数接受的参数
+              // 也会被原封不动地传入原函数，新函数在原函数之前执行
+              beforefn.apply(this, arguments);
+              // 执行原函数并返回原函数的执行结果，
+              // 并且保证 this 不被劫持
+              return _self.apply(this, arguments);
+          }
+      }
+      
+      Function.prototype.after = function(afterfn){
+          var _self = this;
+          return function(){
+              var ret = _self.apply(this, arguments);
+              afterfn.apply(this,arguments);
+              return ret;
+          }
+      };
+      
+      document.getElementById = document.getElementById.before(function(){
+          console.log(1);
+      });
+      var button = document.getElementById( 'button' );
+      console.log(button);
+      // 输出： Uncaught TypeError: Illegal invocation
+      /*
+          异常发生在(1) 处的 _getElementById( id ) 这句代码上，此时 _getElementById 是一个全局函数，当调用一个全局函数时， this 是指向 window 的，而 document.getElementById 方法的内部实现需要使用 this 引用， this 在这个方法内预期是指向 document ，而不是 window , 这是错误发生的原因，所以使用现在的方式给函数增加功能并不保险。
+          改进后的代码可以满足需求，我们要手动把 document 当作上下文 this 传入 _getElementById ：
+      */
+      var _getElementById = document.getElementById;
+    </script>
+    <!--==================================================-->
+    <div id="dibu" class="footer">
+      <div class="info">
+        <div class="container clearfix"></div>
+      </div>
+      <div class="bottom">
+        <div class="container"><span>老苏练习记录</span>
+        </div>
+      </div>
+      <script src="/skin/js/common.js"></script>
+      <script src="/skin/js/footer.js"></script>
+    </div>
+  </body>
+</html>
